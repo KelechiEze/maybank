@@ -24,6 +24,7 @@ import Investments from './components/dashboard/Investments';
 import Insurance from './components/dashboard/Insurance';
 import Settings from './components/dashboard/Settings';
 import NewsDetail from './components/NewsDetail';
+import { Careers, FAQs, Business, Rewards, BranchMap } from './components/WebsitePages';
 import { motion, AnimatePresence } from 'motion/react';
 
 function ScrollToTop() {
@@ -91,6 +92,11 @@ function AppContent() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/faqs" element={<FAQs />} />
+              <Route path="/business" element={<Business />} />
+              <Route path="/rewards" element={<Rewards />} />
+              <Route path="/map" element={<BranchMap />} />
               
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/accounts" element={<Accounts />} />

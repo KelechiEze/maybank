@@ -38,6 +38,7 @@ export default function Dashboard() {
   const [accountNumber, setAccountNumber] = useState('');
   const [selectedSourceAccount, setSelectedSourceAccount] = useState('savings');
   const [otp, setOtp] = useState('');
+  const [pin, setPin] = useState('');
   const [fee, setFee] = useState(0);
   const [selectedBill, setSelectedBill] = useState<any>(null);
   const [billStep, setBillStep] = useState(1);
@@ -46,6 +47,10 @@ export default function Dashboard() {
     { id: 'tx2', title: "Salary Deposit", category: "Income", date: "Oct 20, 2023", amount: "+$85,000.00", isPositive: true },
     { id: 'tx3', title: "Amazon Web Services", category: "Business", date: "Oct 19, 2023", amount: "-$12,400.00", isPositive: false },
     { id: 'tx4', title: "Stripe Payout", category: "Business", date: "Oct 18, 2023", amount: "+$25,000.00", isPositive: true },
+    { id: 'tx5', title: "Netflix Subscription", category: "Entertainment", date: "Oct 15, 2023", amount: "-$15.99", isPositive: false },
+    { id: 'tx6', title: "Starbucks Coffee", category: "Food & Drink", date: "Oct 14, 2023", amount: "-$5.50", isPositive: false },
+    { id: 'tx7', title: "Freelance Payment", category: "Income", date: "Oct 12, 2023", amount: "+$1,200.00", isPositive: true },
+    { id: 'tx8', title: "Electric Bill", category: "Utilities", date: "Oct 10, 2023", amount: "-$120.00", isPositive: false },
   ]);
   const [totalBalance, setTotalBalance] = useState(2450500.00);
 
@@ -93,7 +98,7 @@ export default function Dashboard() {
   };
 
   const handleSendMoney = () => {
-    setSendStep(3); // Processing
+    setSendStep(4); // Processing
     setTimeout(() => {
       const amount = parseFloat(sendAmount.replace(/,/g, ''));
       const savedAccounts = JSON.parse(localStorage.getItem('maybank_accounts') || '[]');
@@ -131,12 +136,12 @@ export default function Dashboard() {
       setTotalBalance(total);
 
       saveTransaction(newTx);
-      setSendStep(4); // Success
+      setSendStep(5); // Success
     }, 2500);
   };
 
   const handlePayBill = () => {
-    setBillStep(2); // Processing
+    setBillStep(3); // Processing
     setTimeout(() => {
       const amount = parseFloat(sendAmount.replace(/,/g, ''));
       const savedAccounts = JSON.parse(localStorage.getItem('maybank_accounts') || '[]');
@@ -174,7 +179,7 @@ export default function Dashboard() {
       setTotalBalance(total);
 
       saveTransaction(newTx);
-      setBillStep(3); // Success
+      setBillStep(4); // Success
     }, 2500);
   };
 
@@ -186,6 +191,7 @@ export default function Dashboard() {
     setBankName('');
     setAccountNumber('');
     setOtp('');
+    setPin('');
   };
 
   const resetBill = () => {
@@ -194,6 +200,7 @@ export default function Dashboard() {
     setSelectedBill(null);
     setSendAmount('');
     setOtp('');
+    setPin('');
   };
 
   const bills = [
@@ -454,6 +461,31 @@ export default function Dashboard() {
                 <div>
                   <div className="text-center mb-6">
                     <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center bg-slate-100 text-slate-900 no-round">
+                      <Lock className="h-8 w-8" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900">Transaction PIN</h3>
+                    <p className="text-sm text-slate-500 mt-2">Enter your 4-digit transaction PIN to authorize this transfer.</p>
+                  </div>
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Enter PIN</label>
+                      <OTPInput length={4} value={pin} onChange={setPin} />
+                    </div>
+                    <button 
+                      onClick={() => setSendStep(3)}
+                      disabled={pin.length < 4}
+                      className="no-round w-full bg-slate-900 py-4 font-bold text-white hover:bg-primary hover:text-slate-900 transition-all disabled:opacity-50"
+                    >
+                      Verify PIN
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {sendStep === 3 && (
+                <div>
+                  <div className="text-center mb-6">
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center bg-slate-100 text-slate-900 no-round">
                       <ShieldCheck className="h-8 w-8" />
                     </div>
                     <h3 className="text-xl font-bold text-slate-900">Security Verification</h3>
@@ -478,7 +510,7 @@ export default function Dashboard() {
                 </div>
               )}
 
-              {sendStep === 3 && (
+              {sendStep === 4 && (
                 <div className="text-center py-8">
                   <div className="h-16 w-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6" />
                   <h3 className="text-xl font-bold text-slate-900">Processing Transaction</h3>
@@ -486,7 +518,7 @@ export default function Dashboard() {
                 </div>
               )}
 
-              {sendStep === 4 && (
+              {sendStep === 5 && (
                 <div className="text-center">
                   <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center bg-green-100 text-green-600 no-round">
                     <CheckCircle2 className="h-10 w-10" />
@@ -602,16 +634,41 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <button 
-                    onClick={handlePayBill}
+                    onClick={() => setBillStep(2)}
                     disabled={!sendAmount}
                     className="no-round mt-8 w-full bg-slate-900 py-4 font-bold text-white hover:bg-primary hover:text-slate-900 transition-all disabled:opacity-50"
                   >
-                    Pay Now
+                    Continue
                   </button>
                 </div>
               )}
 
               {billStep === 2 && (
+                <div>
+                  <div className="text-center mb-6">
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center bg-slate-100 text-slate-900 no-round">
+                      <Lock className="h-8 w-8" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900">Transaction PIN</h3>
+                    <p className="text-sm text-slate-500 mt-2">Enter your 4-digit transaction PIN to authorize this payment.</p>
+                  </div>
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Enter PIN</label>
+                      <OTPInput length={4} value={pin} onChange={setPin} />
+                    </div>
+                    <button 
+                      onClick={() => setBillStep(3)}
+                      disabled={pin.length < 4}
+                      className="no-round w-full bg-slate-900 py-4 font-bold text-white hover:bg-primary hover:text-slate-900 transition-all disabled:opacity-50"
+                    >
+                      Verify & Pay
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {billStep === 3 && (
                 <div className="text-center py-8">
                   <div className="h-16 w-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6" />
                   <h3 className="text-xl font-bold text-slate-900">Processing Payment</h3>
@@ -619,7 +676,7 @@ export default function Dashboard() {
                 </div>
               )}
 
-              {billStep === 3 && (
+              {billStep === 4 && (
                 <div className="text-center">
                   <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center bg-green-100 text-green-600 no-round">
                     <CheckCircle2 className="h-10 w-10" />

@@ -8,8 +8,9 @@ export default function Insurance() {
   const [selectedPolicy, setSelectedPolicy] = useState<any>(null);
   const [selectedPlan, setSelectedPlan] = useState<any>(null);
   const [isOptingIn, setIsOptingIn] = useState(false);
-  const [optInStep, setOptInStep] = useState(1); // 1: Details, 2: OTP, 3: Success
+  const [optInStep, setOptInStep] = useState(1); // 1: Details, 2: PIN, 3: OTP, 4: Success
   const [otp, setOtp] = useState('');
+  const [pin, setPin] = useState('');
 
   const [policies, setPolicies] = useState<any[]>([]);
 
@@ -109,7 +110,12 @@ export default function Insurance() {
   ];
 
   const handleOptIn = () => {
-    setOptInStep(2); // Show OTP
+    setOptInStep(2); // Show PIN
+    setPin('');
+  };
+
+  const verifyPin = () => {
+    setOptInStep(3); // Show OTP
     setOtp('');
   };
 
@@ -135,7 +141,7 @@ export default function Insurance() {
       localStorage.setItem('maybank_policies', JSON.stringify(updatedPolicies.map(p => ({ ...p, icon: p.id }))));
 
       setIsOptingIn(false);
-      setOptInStep(3); // Success
+      setOptInStep(4); // Success
     }, 2000);
   };
 
@@ -144,6 +150,7 @@ export default function Insurance() {
     setOptInStep(1);
     setIsOptingIn(false);
     setOtp('');
+    setPin('');
   };
 
   return (
@@ -285,6 +292,28 @@ export default function Insurance() {
                   <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center bg-slate-100 text-slate-900 no-round">
                     <ShieldCheck className="h-8 w-8" />
                   </div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">Transaction PIN</h3>
+                  <p className="text-sm text-slate-500 mb-8">Enter your 4-digit transaction PIN to authorize this enrollment.</p>
+                  
+                  <div className="space-y-6">
+                    <OTPInput length={4} value={pin} onChange={setPin} />
+                    
+                    <button 
+                      onClick={verifyPin}
+                      disabled={pin.length < 4}
+                      className="w-full bg-slate-900 py-4 font-bold text-white hover:bg-primary hover:text-slate-900 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                    >
+                      Verify PIN
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {optInStep === 3 && (
+                <div className="p-8 lg:p-12 text-center max-w-md mx-auto">
+                  <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center bg-slate-100 text-slate-900 no-round">
+                    <ShieldCheck className="h-8 w-8" />
+                  </div>
                   <h3 className="text-2xl font-black text-slate-900 mb-2">Verification Required</h3>
                   <p className="text-sm text-slate-500 mb-8">We've sent a 6-digit OTP to your registered mobile number to confirm your enrollment in {selectedPlan.title}.</p>
                   
@@ -313,7 +342,7 @@ export default function Insurance() {
                 </div>
               )}
 
-              {optInStep === 3 && (
+              {optInStep === 4 && (
                 <div className="p-8 lg:p-12 text-center max-w-md mx-auto">
                   <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center bg-green-100 text-green-600 no-round">
                     <CheckCircle2 className="h-10 w-10" />

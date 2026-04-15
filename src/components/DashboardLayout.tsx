@@ -14,16 +14,21 @@ import {
   Shield,
   Camera,
   Menu,
-  X as CloseIcon
+  X as CloseIcon,
+  ChevronRight
 } from 'lucide-react';
 import Logo from './Logo';
+import { useNavigate } from 'react-router-dom';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
   const handleProfileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -42,10 +47,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   const notifications = [
-    { id: 1, title: "Security Alert", message: "New login detected from Bangkok, TH", time: "2 mins ago", type: "alert" },
-    { id: 2, title: "Payment Received", message: "฿85,000.00 deposited to your account", time: "1 hour ago", type: "success" },
-    { id: 3, title: "Card Frozen", message: "Your Platinum Debit card has been frozen", time: "3 hours ago", type: "info" },
+    { id: 1, title: "Security Alert", message: "New login detected from Bangkok, TH", time: "2 mins ago", type: "alert", link: "/dashboard/settings" },
+    { id: 2, title: "Payment Received", message: "฿85,000.00 deposited to your account", time: "1 hour ago", type: "success", link: "/dashboard/transactions" },
+    { id: 3, title: "Card Frozen", message: "Your Platinum Debit card has been frozen", time: "3 hours ago", type: "info", link: "/dashboard/cards" },
   ];
+
+  const sidebarLinks = [
+    { to: "/dashboard", icon: <LayoutDashboard />, label: "Overview" },
+    { to: "/dashboard/accounts", icon: <Wallet />, label: "Accounts" },
+    { to: "/dashboard/cards", icon: <CreditCard />, label: "Cards" },
+    { to: "/dashboard/transactions", icon: <History />, label: "Transactions" },
+    { to: "/dashboard/investments", icon: <TrendingUp />, label: "Investments" },
+  ];
+
+  const searchResults = searchQuery.length > 2 ? [
+    { id: 's1', title: "Apple Store", type: "Transaction", link: "/dashboard/transactions" },
+    { id: 's2', title: "Savings Account", type: "Account", link: "/dashboard/accounts" },
+    { id: 's3', title: "Platinum Card", type: "Card", link: "/dashboard/cards" },
+    { id: 's4', title: "Crypto Portfolio", type: "Investment", link: "/dashboard/investments" },
+  ].filter(item => item.title.toLowerCase().includes(searchQuery.toLowerCase())) : [];
 
   return (
     <div className="flex min-h-screen bg-slate-50 relative">
@@ -84,11 +104,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
         
         <nav className="flex-1 space-y-1 px-4">
-          <SidebarLink to="/dashboard" icon={<LayoutDashboard />} label="Overview" active={location.pathname === '/dashboard'} onClick={() => setIsMobileMenuOpen(false)} />
-          <SidebarLink to="/dashboard/accounts" icon={<Wallet />} label="Accounts" active={location.pathname === '/dashboard/accounts'} onClick={() => setIsMobileMenuOpen(false)} />
-          <SidebarLink to="/dashboard/cards" icon={<CreditCard />} label="Cards" active={location.pathname === '/dashboard/cards'} onClick={() => setIsMobileMenuOpen(false)} />
-          <SidebarLink to="/dashboard/transactions" icon={<History />} label="Transactions" active={location.pathname === '/dashboard/transactions'} onClick={() => setIsMobileMenuOpen(false)} />
-          <SidebarLink to="/dashboard/investments" icon={<TrendingUp />} label="Investments" active={location.pathname === '/dashboard/investments'} onClick={() => setIsMobileMenuOpen(false)} />
+          <div className="lg:hidden space-y-1">
+            {/* These are in the bottom bar on mobile, but we can keep them here too or hide them */}
+            {/* User said: "the insurance settings and logout can remain in the sidebar menu" */}
+            {/* So we hide the first 5 in the sidebar on mobile */}
+          </div>
+          <div className="hidden lg:block space-y-1">
+            {sidebarLinks.map(link => (
+              <SidebarLink key={link.to} to={link.to} icon={link.icon} label={link.label} active={location.pathname === link.to} />
+            ))}
+          </div>
           <SidebarLink to="/dashboard/insurance" icon={<Shield />} label="Insurance" active={location.pathname === '/dashboard/insurance'} onClick={() => setIsMobileMenuOpen(false)} />
         </nav>
 
@@ -121,8 +146,53 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <input 
                 type="text" 
                 placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setShowSearchResults(e.target.value.length > 0);
+                }}
+                onFocus={() => setShowSearchResults(searchQuery.length > 0)}
                 className="no-round w-64 border border-slate-200 bg-slate-50 py-2 pl-10 pr-4 text-sm font-medium outline-none focus:border-primary"
               />
+              
+              <AnimatePresence>
+                {showSearchResults && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full right-0 mt-2 w-80 bg-white border border-slate-200 shadow-2xl no-round z-50 overflow-hidden"
+                  >
+                    <div className="p-3 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Search Results</span>
+                      <button onClick={() => setShowSearchResults(false)}><CloseIcon className="h-3 w-3 text-slate-400" /></button>
+                    </div>
+                    <div className="max-h-64 overflow-y-auto">
+                      {searchResults.length > 0 ? searchResults.map(result => (
+                        <button 
+                          key={result.id}
+                          onClick={() => {
+                            navigate(result.link);
+                            setShowSearchResults(false);
+                            setSearchQuery('');
+                          }}
+                          className="w-full p-4 text-left border-b border-slate-50 hover:bg-slate-50 transition-all flex items-center justify-between group"
+                        >
+                          <div>
+                            <p className="text-sm font-bold text-slate-900 group-hover:text-primary transition-all">{result.title}</p>
+                            <p className="text-[10px] text-slate-400 uppercase font-bold">{result.type}</p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-primary transition-all" />
+                        </button>
+                      )) : (
+                        <div className="p-8 text-center">
+                          <p className="text-xs font-bold text-slate-400">No results found for "{searchQuery}"</p>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             
             <div className="relative">
@@ -163,7 +233,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       </div>
                       <div className="max-h-[60vh] lg:max-h-96 overflow-y-auto">
                         {notifications.map(n => (
-                          <div key={n.id} className="p-4 border-b border-slate-50 hover:bg-slate-50 transition-all cursor-pointer">
+                          <div 
+                            key={n.id} 
+                            onClick={() => {
+                              navigate(n.link);
+                              setShowNotifications(false);
+                            }}
+                            className="p-4 border-b border-slate-50 hover:bg-slate-50 transition-all cursor-pointer"
+                          >
                             <div className="flex justify-between items-start">
                               <p className="text-sm font-bold text-slate-900">{n.title}</p>
                               <span className="text-[10px] text-slate-400">{n.time}</span>
@@ -208,15 +285,31 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </header>
 
-        <div className="p-8">
+        <div className="p-8 pb-32 lg:pb-8">
           {children}
+        </div>
+
+        {/* Mobile Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 lg:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+          <div className="flex items-center justify-around p-2">
+            {sidebarLinks.map(link => (
+              <Link 
+                key={link.to} 
+                to={link.to} 
+                className={`flex flex-col items-center gap-1 p-2 transition-all ${location.pathname === link.to ? 'text-primary' : 'text-slate-400'}`}
+              >
+                <span className="h-5 w-5">{link.icon}</span>
+                <span className="text-[10px] font-bold uppercase tracking-tighter">{link.label}</span>
+              </Link>
+            ))}
+          </div>
         </div>
       </main>
     </div>
   );
 }
 
-function SidebarLink({ to, icon, label, active = false, onClick }: { to: string, icon: any, label: string, active?: boolean, onClick?: () => void }) {
+function SidebarLink({ to, icon, label, active = false, onClick }: { to: string, icon: any, label: string, active?: boolean, onClick?: () => void, key?: string }) {
   return (
     <Link to={to} onClick={onClick} className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-bold transition-all ${active ? 'bg-primary text-slate-900' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}>
       {icon && <span className="h-5 w-5">{icon}</span>}

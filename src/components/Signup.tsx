@@ -295,11 +295,11 @@ export default function Signup() {
                   <FormGroup label="Create Password" icon={<Lock />} type="password" placeholder="••••••••" value={formData.password} onChange={(v) => updateFormData('password', v)} />
                   <FormGroup label="Confirm Password" icon={<Lock />} type="password" placeholder="••••••••" value={formData.confirmPassword} onChange={(v) => updateFormData('confirmPassword', v)} />
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-slate-500">6-Digit Transaction PIN</label>
-                    <OTPInput value={formData.pin} onChange={(v) => updateFormData('pin', v)} />
+                    <label className="text-xs font-bold uppercase tracking-widest text-slate-500">4-Digit Transaction PIN</label>
+                    <OTPInput length={4} value={formData.pin} onChange={(v) => updateFormData('pin', v)} />
                   </div>
                   <button 
-                    disabled={formData.password !== formData.confirmPassword || formData.pin.length < 6}
+                    disabled={formData.password !== formData.confirmPassword || formData.pin.length < 4}
                     className="no-round w-full bg-slate-900 py-5 font-black uppercase tracking-widest text-white transition-all hover:bg-primary hover:text-slate-900 disabled:opacity-50"
                   >
                     Complete Setup

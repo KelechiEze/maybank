@@ -14,16 +14,16 @@ export function TopBar() {
             info@maybank.com
           </a>
           <div className="h-4 w-[1px] bg-slate-200" />
-          <a href="#" className="flex items-center gap-2 hover:text-primary transition-colors">
+          <Link to="/map" className="flex items-center gap-2 hover:text-primary transition-colors">
             <MapPin className="h-4 w-4" />
             Find Nearest Branch
-          </a>
+          </Link>
         </div>
         <div className="flex items-center gap-6">
-          <a href="#" className="hover:text-primary transition-colors">Careers</a>
-          <a href="#" className="hover:text-primary transition-colors">Faq's</a>
-          <a href="#" className="hover:text-primary transition-colors">Business</a>
-          <a href="#" className="hover:text-primary transition-colors">Rewards</a>
+          <Link to="/careers" className="hover:text-primary transition-colors">Careers</Link>
+          <Link to="/faqs" className="hover:text-primary transition-colors">Faq's</Link>
+          <Link to="/business" className="hover:text-primary transition-colors">Business</Link>
+          <Link to="/rewards" className="hover:text-primary transition-colors">Rewards</Link>
           <button className="flex items-center gap-2 font-medium text-slate-900 hover:text-primary transition-colors">
             <Search className="h-4 w-4" />
             Search

@@ -1,6 +1,7 @@
 import { Apple, Play, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Logo from './Logo';
 
 export default function Footer() {
@@ -71,19 +72,47 @@ export default function Footer() {
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
           <FooterColumn 
             title="Loans"
-            links={["Home Loan", "Personal Loan", "Vehicle Loan", "Education Loan", "Gold Loan", "Low Interest", "Our All Cards"]}
+            links={[
+              { label: "Home Loan", to: "/services" },
+              { label: "Personal Loan", to: "/services" },
+              { label: "Vehicle Loan", to: "/services" },
+              { label: "Education Loan", to: "/services" },
+              { label: "Gold Loan", to: "/services" },
+              { label: "Low Interest", to: "/services" },
+              { label: "Our All Cards", to: "/dashboard/cards" }
+            ]}
           />
           <FooterColumn 
             title="Rates & Charges"
-            links={["About Us", "Testimonials", "Careers", "Career Detail", "Faq's", "List View", "Get In Touch"]}
+            links={[
+              { label: "About Us", to: "/about" },
+              { label: "Testimonials", to: "/about" },
+              { label: "Careers", to: "/careers" },
+              { label: "Faq's", to: "/faqs" },
+              { label: "Get In Touch", to: "/contact" }
+            ]}
           />
           <FooterColumn 
             title="About Us"
-            links={["About Us", "Board of Directors", "Careers", "Career Detail", "Business", "Faq's", "Testimonials"]}
+            links={[
+              { label: "About Us", to: "/about" },
+              { label: "Board of Directors", to: "/about" },
+              { label: "Careers", to: "/careers" },
+              { label: "Business", to: "/business" },
+              { label: "Faq's", to: "/faqs" }
+            ]}
           />
           <FooterColumn 
             title="Services"
-            links={["All Accounts", "Home Loan", "Personal Loan", "Vehicle Loan", "Education Loan", "Gold Loan", "Our All Cards"]}
+            links={[
+              { label: "All Accounts", to: "/dashboard/accounts" },
+              { label: "Home Loan", to: "/services" },
+              { label: "Personal Loan", to: "/services" },
+              { label: "Vehicle Loan", to: "/services" },
+              { label: "Education Loan", to: "/services" },
+              { label: "Gold Loan", to: "/services" },
+              { label: "Our All Cards", to: "/dashboard/cards" }
+            ]}
           />
         </div>
 
@@ -99,16 +128,16 @@ export default function Footer() {
   );
 }
 
-function FooterColumn({ title, links }: { title: string; links: string[] }) {
+function FooterColumn({ title, links }: { title: string; links: { label: string; to: string }[] }) {
   return (
     <div className="space-y-6">
       <h3 className="text-xl font-bold">{title}</h3>
       <ul className="space-y-3">
         {links.map((link, i) => (
           <li key={i}>
-            <a href="#" className="text-slate-400 transition-all hover:text-primary hover:translate-x-1 inline-block">
-              {link}
-            </a>
+            <Link to={link.to} className="text-slate-400 transition-all hover:text-primary hover:translate-x-1 inline-block">
+              {link.label}
+            </Link>
           </li>
         ))}
       </ul>

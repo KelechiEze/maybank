@@ -5,6 +5,15 @@ import { motion, AnimatePresence } from 'motion/react';
 
 export default function Investments() {
   const [selectedInvestment, setSelectedInvestment] = useState<any>(null);
+  const [showInvestNow, setShowInvestNow] = useState(false);
+  const [timeframe, setTimeframe] = useState('3M');
+
+  const availableInvestments = [
+    { id: 'inv-1', title: "Global Energy Fund", type: "Equity", risk: "Medium", minInvest: "$500" },
+    { id: 'inv-2', title: "Tech Growth ETF", type: "ETF", risk: "High", minInvest: "$1,000" },
+    { id: 'inv-3', title: "Corporate Bonds", type: "Fixed Income", risk: "Low", minInvest: "$2,000" },
+    { id: 'inv-4', title: "Emerging Markets", type: "Equity", risk: "High", minInvest: "$1,500" },
+  ];
 
   const investments = [
     { id: 1, title: "S&P 500 Index Fund", type: "Equity Fund", return: "+12.4%", amount: "$15,000.00", value: "$18,600.00", risk: "Medium", allocation: "40%", description: "Tracks the performance of 500 large companies listed on stock exchanges in the United States." },
@@ -18,7 +27,10 @@ export default function Investments() {
       <div className="space-y-8">
         <div className="flex items-center justify-between">
           <h2 className="text-xl lg:text-2xl font-bold text-slate-900">Portfolio</h2>
-          <button className="no-round bg-slate-900 px-4 lg:px-6 py-2 lg:py-3 text-[10px] lg:text-sm font-bold text-white hover:bg-primary hover:text-slate-900 transition-all">
+          <button 
+            onClick={() => setShowInvestNow(true)}
+            className="no-round bg-slate-900 px-4 lg:px-6 py-2 lg:py-3 text-[10px] lg:text-sm font-bold text-white hover:bg-primary hover:text-slate-900 transition-all"
+          >
             Invest Now
           </button>
         </div>
@@ -29,7 +41,13 @@ export default function Investments() {
               <h3 className="text-base lg:text-lg font-bold text-slate-900">Performance</h3>
               <div className="flex gap-1 lg:gap-2">
                 {['1W', '1M', '3M', '1Y', 'ALL'].map(t => (
-                  <button key={t} className={`px-2 lg:px-3 py-1 text-[10px] lg:text-xs font-bold ${t === '3M' ? 'bg-primary text-slate-900' : 'text-slate-400 hover:text-slate-900'}`}>{t}</button>
+                  <button 
+                    key={t} 
+                    onClick={() => setTimeframe(t)}
+                    className={`px-2 lg:px-3 py-1 text-[10px] lg:text-xs font-bold transition-all ${t === timeframe ? 'bg-primary text-slate-900' : 'text-slate-400 hover:text-slate-900'}`}
+                  >
+                    {t}
+                  </button>
                 ))}
               </div>
             </div>
@@ -70,6 +88,56 @@ export default function Investments() {
           ))}
         </div>
       </div>
+
+      {/* Invest Now Modal */}
+      <AnimatePresence>
+        {showInvestNow && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowInvestNow(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-lg bg-white p-8 no-round shadow-2xl"
+            >
+              <button 
+                onClick={() => setShowInvestNow(false)}
+                className="absolute right-4 top-4 text-slate-400 hover:text-slate-900"
+              >
+                <X className="h-6 w-6" />
+              </button>
+
+              <h3 className="text-2xl font-bold text-slate-900 mb-6">Invest Now</h3>
+              <div className="space-y-4">
+                {availableInvestments.map(inv => (
+                  <div key={inv.id} className="p-4 border border-slate-100 hover:border-primary transition-all no-round group cursor-pointer flex items-center justify-between">
+                    <div>
+                      <p className="font-bold text-slate-900">{inv.title}</p>
+                      <p className="text-xs text-slate-500">{inv.type} • Risk: {inv.risk}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-black text-slate-900">{inv.minInvest}</p>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Min. Invest</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button 
+                onClick={() => setShowInvestNow(false)}
+                className="no-round mt-8 w-full bg-slate-900 py-4 font-bold text-white hover:bg-primary hover:text-slate-900 transition-all"
+              >
+                View All Opportunities
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Investment Detail Modal */}
       <AnimatePresence>

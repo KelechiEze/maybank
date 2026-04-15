@@ -9,6 +9,7 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState('profile');
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [otpStep, setOtpStep] = useState(1);
+  const [otpPurpose, setOtpPurpose] = useState<'profile' | 'password'>('profile');
   const [isSaving, setIsSaving] = useState(false);
   const [firstName, setFirstName] = useState('John');
   const [lastName, setLastName] = useState('Doe');
@@ -17,6 +18,14 @@ export default function Settings() {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    setOtpPurpose('profile');
+    setShowOtpModal(true);
+    setOtpStep(1);
+    setOtp('');
+  };
+
+  const handleChangePassword = () => {
+    setOtpPurpose('password');
     setShowOtpModal(true);
     setOtpStep(1);
     setOtp('');
@@ -153,7 +162,12 @@ export default function Settings() {
                         <div className="absolute right-1 top-1 h-4 w-4 bg-slate-900" />
                       </div>
                     </div>
-                    <button className="no-round border border-slate-200 px-6 py-3 font-bold text-slate-900 hover:border-primary transition-all">Change Password</button>
+                    <button 
+                      onClick={handleChangePassword}
+                      className="no-round border border-slate-200 px-6 py-3 font-bold text-slate-900 hover:border-primary transition-all"
+                    >
+                      Change Password
+                    </button>
                   </div>
                 </motion.div>
               )}
@@ -170,7 +184,6 @@ export default function Settings() {
                     <NotificationToggle label="Email Notifications" active />
                     <NotificationToggle label="Push Notifications" active />
                     <NotificationToggle label="SMS Alerts" />
-                    <NotificationToggle label="Marketing Emails" />
                   </div>
                 </motion.div>
               )}
@@ -217,8 +230,8 @@ export default function Settings() {
                     <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center bg-slate-100 text-slate-900 no-round">
                       <ShieldCheck className="h-8 w-8" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900">Confirm Changes</h3>
-                    <p className="text-sm text-slate-500 mt-2">Please enter the 6-digit OTP sent to your email to save these profile changes.</p>
+                    <h3 className="text-xl font-bold text-slate-900">Confirm {otpPurpose === 'profile' ? 'Changes' : 'Password Reset'}</h3>
+                    <p className="text-sm text-slate-500 mt-2">Please enter the 6-digit OTP sent to your email to {otpPurpose === 'profile' ? 'save these profile changes' : 'authorize your password change'}.</p>
                   </div>
                   <div className="space-y-6">
                     <OTPInput value={otp} onChange={setOtp} />
@@ -227,7 +240,7 @@ export default function Settings() {
                       disabled={otp.length < 6}
                       className="no-round w-full bg-slate-900 py-4 font-bold text-white hover:bg-primary hover:text-slate-900 transition-all disabled:opacity-50"
                     >
-                      Verify & Save
+                      Verify & {otpPurpose === 'profile' ? 'Save' : 'Confirm'}
                     </button>
                   </div>
                 </div>
@@ -236,7 +249,7 @@ export default function Settings() {
               {otpStep === 2 && (
                 <div className="text-center py-8">
                   <div className="h-16 w-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6" />
-                  <h3 className="text-xl font-bold text-slate-900">Saving Changes</h3>
+                  <h3 className="text-xl font-bold text-slate-900">{otpPurpose === 'profile' ? 'Saving Changes' : 'Updating Password'}</h3>
                 </div>
               )}
 
@@ -245,8 +258,8 @@ export default function Settings() {
                   <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center bg-green-100 text-green-600 no-round">
                     <CheckCircle2 className="h-10 w-10" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900">Changes Saved</h3>
-                  <p className="mt-2 text-slate-500">Your profile has been updated successfully.</p>
+                  <h3 className="text-xl font-bold text-slate-900">{otpPurpose === 'profile' ? 'Changes Saved' : 'Password Updated'}</h3>
+                  <p className="mt-2 text-slate-500">{otpPurpose === 'profile' ? 'Your profile has been updated successfully.' : 'Your password has been changed successfully.'}</p>
                 </div>
               )}
             </motion.div>

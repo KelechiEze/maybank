@@ -17,6 +17,7 @@ export default function Accounts() {
   const [accountNumber, setAccountNumber] = useState('');
   const [fee, setFee] = useState(0);
   const [otp, setOtp] = useState('');
+  const [pin, setPin] = useState('');
 
   const [accounts, setAccounts] = useState<any[]>([]);
 
@@ -56,6 +57,9 @@ export default function Accounts() {
       { id: 'tx-init-1', accId: 'savings', title: "International Wire Transfer", category: "Business", date: "Oct 24, 2023", time: "10:30", amount: "-$12,500.00", isPositive: false, ref: "MB-TX-99281", method: "Savings Account •••• 1290", status: "Completed" },
       { id: 'tx-init-2', accId: 'savings', title: "Stock Dividend", category: "Investment", date: "Oct 20, 2023", time: "09:00", amount: "+$4,200.00", isPositive: true, ref: "MB-TX-88122", method: "Savings Account •••• 1290", status: "Completed" },
       { id: 'tx-init-3', accId: 'current', title: "Bangkok Real Estate Tax", category: "Government", date: "Oct 22, 2023", time: "13:45", amount: "-฿45,000.00", isPositive: false, ref: "MB-TX-55182", method: "Current Account •••• 8210", status: "Completed" },
+      { id: 'tx-init-4', accId: 'savings', title: "Apple Store", category: "Electronics", date: "Oct 24, 2023", time: "15:20", amount: "-$1,200.00", isPositive: false, ref: "MB-TX-11223", method: "Savings Account •••• 1290", status: "Completed" },
+      { id: 'tx-init-5', accId: 'current', title: "Salary Deposit", category: "Income", date: "Oct 20, 2023", time: "08:00", amount: "+฿85,000.00", isPositive: true, ref: "MB-TX-44556", method: "Current Account •••• 8210", status: "Completed" },
+      { id: 'tx-init-6', accId: 'savings', title: "Netflix Subscription", category: "Entertainment", date: "Oct 15, 2023", time: "00:01", amount: "-$15.99", isPositive: false, ref: "MB-TX-77889", method: "Savings Account •••• 1290", status: "Completed" },
     ];
     
     const combined = [...allTx, ...initialTx];
@@ -68,7 +72,7 @@ export default function Accounts() {
   };
 
   const handleSendMoney = () => {
-    setSendStep(3); // Processing
+    setSendStep(4); // Processing
     setTimeout(() => {
       const amount = parseFloat(sendAmount.replace(/,/g, ''));
       const newTx = {
@@ -101,7 +105,7 @@ export default function Accounts() {
       const existingTx = JSON.parse(localStorage.getItem('maybank_transactions') || '[]');
       localStorage.setItem('maybank_transactions', JSON.stringify([newTx, ...existingTx]));
 
-      setSendStep(4); // Success
+      setSendStep(5); // Success
     }, 2500);
   };
 
@@ -113,6 +117,7 @@ export default function Accounts() {
     setBankName('');
     setAccountNumber('');
     setOtp('');
+    setPin('');
   };
 
   return (
@@ -336,6 +341,31 @@ export default function Accounts() {
                 <div>
                   <div className="text-center mb-6">
                     <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center bg-slate-100 text-slate-900 no-round">
+                      <Lock className="h-8 w-8" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900">Transaction PIN</h3>
+                    <p className="text-sm text-slate-500 mt-2">Enter your 4-digit transaction PIN to authorize this transfer.</p>
+                  </div>
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Enter PIN</label>
+                      <OTPInput length={4} value={pin} onChange={setPin} />
+                    </div>
+                    <button 
+                      onClick={() => setSendStep(3)}
+                      disabled={pin.length < 4}
+                      className="no-round w-full bg-slate-900 py-4 font-bold text-white hover:bg-primary hover:text-slate-900 transition-all disabled:opacity-50"
+                    >
+                      Verify PIN
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {sendStep === 3 && (
+                <div>
+                  <div className="text-center mb-6">
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center bg-slate-100 text-slate-900 no-round">
                       <ShieldCheck className="h-8 w-8" />
                     </div>
                     <h3 className="text-xl font-bold text-slate-900">Security Verification</h3>
@@ -357,7 +387,7 @@ export default function Accounts() {
                 </div>
               )}
 
-              {sendStep === 3 && (
+              {sendStep === 4 && (
                 <div className="text-center py-8">
                   <div className="h-16 w-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6" />
                   <h3 className="text-xl font-bold text-slate-900">Processing Transaction</h3>
@@ -365,7 +395,7 @@ export default function Accounts() {
                 </div>
               )}
 
-              {sendStep === 4 && (
+              {sendStep === 5 && (
                 <div className="text-center">
                   <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center bg-green-100 text-green-600 no-round">
                     <CheckCircle2 className="h-10 w-10" />
@@ -499,10 +529,32 @@ function AccountCard({ type, number, balance, currency, status, onClick }: any) 
 }
 
 function ServiceItem({ label }: { label: string }) {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isDone, setIsDone] = useState(false);
+
+  const handleClick = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      setIsProcessing(false);
+      setIsDone(true);
+      setTimeout(() => setIsDone(false), 3000);
+    }, 2000);
+  };
+
   return (
-    <button className="flex items-center justify-between p-4 border border-slate-100 hover:border-primary hover:bg-slate-50 transition-all text-left">
+    <button 
+      onClick={handleClick}
+      disabled={isProcessing}
+      className="flex items-center justify-between p-4 border border-slate-100 hover:border-primary hover:bg-slate-50 transition-all text-left group"
+    >
       <span className="font-bold text-slate-700">{label}</span>
-      <ArrowRight className="h-4 w-4 text-slate-300" />
+      {isProcessing ? (
+        <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      ) : isDone ? (
+        <CheckCircle2 className="h-4 w-4 text-green-500" />
+      ) : (
+        <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-primary transition-all" />
+      )}
     </button>
   );
 }

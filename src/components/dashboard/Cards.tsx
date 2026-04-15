@@ -1,25 +1,41 @@
 import React, { useState } from 'react';
 import DashboardLayout from '../DashboardLayout';
-import { CreditCard, Plus, Shield, Lock, Settings, Eye, EyeOff, X, CheckCircle2, Mail } from 'lucide-react';
+import { CreditCard, Plus, Shield, Lock, Settings, Eye, EyeOff, X, CheckCircle2, Mail, ShieldCheck } from 'lucide-react';
 import Logo from '../Logo';
 import { motion, AnimatePresence } from 'motion/react';
+import OTPInput from '../ui/OTPInput';
 
 export default function Cards() {
   const [showNumber, setShowNumber] = useState(false);
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
   const [isFrozen, setIsFrozen] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [pendingToggle, setPendingToggle] = useState<any>(null);
 
+  const [applyStep, setApplyStep] = useState(1); // 1: Select, 2: Processing, 3: Success
+  const [selectedCardType, setSelectedCardType] = useState<string | null>(null);
+
   const handleResetPin = () => {
+    setActiveModal('reset-pin-otp');
+  };
+
+  const verifyResetPinOtp = () => {
     setOtpSent(true);
     setTimeout(() => {
       setActiveModal('pin-success');
       setOtpSent(false);
     }, 3000);
+  };
+
+  const handleApply = () => {
+    setApplyStep(2);
+    setTimeout(() => {
+      setApplyStep(3);
+    }, 8000);
   };
 
   const handleToggleRequest = (cardType: string) => {
@@ -169,11 +185,32 @@ export default function Cards() {
                   <p className="mt-4 text-slate-600">For security, we will send a one-time password (OTP) to your registered email address.</p>
                   <button 
                     onClick={handleResetPin}
-                    disabled={otpSent}
-                    className="no-round mt-8 w-full bg-slate-900 py-4 font-bold text-white hover:bg-primary hover:text-slate-900 transition-all disabled:opacity-50"
+                    className="no-round mt-8 w-full bg-slate-900 py-4 font-bold text-white hover:bg-primary hover:text-slate-900 transition-all"
                   >
-                    {otpSent ? "Sending OTP..." : "Send OTP to Email"}
+                    Send OTP to Email
                   </button>
+                </div>
+              )}
+
+              {activeModal === 'reset-pin-otp' && (
+                <div>
+                  <div className="text-center mb-6">
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center bg-slate-100 text-slate-900 no-round">
+                      <ShieldCheck className="h-8 w-8" />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900">Verify OTP</h3>
+                    <p className="text-sm text-slate-500 mt-2">Enter the 6-digit code sent to your email.</p>
+                  </div>
+                  <div className="space-y-6">
+                    <OTPInput value={otp} onChange={setOtp} />
+                    <button 
+                      onClick={verifyResetPinOtp}
+                      disabled={otp.length < 6}
+                      className="no-round w-full bg-slate-900 py-4 font-bold text-white hover:bg-primary hover:text-slate-900 transition-all disabled:opacity-50"
+                    >
+                      Verify & Reset
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -213,23 +250,64 @@ export default function Cards() {
 
               {activeModal === 'apply' && (
                 <div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-6">Apply for New Card</h3>
-                  <div className="space-y-4">
-                    <div className="p-4 border-2 border-primary bg-primary/5 no-round cursor-pointer">
-                      <p className="font-bold text-slate-900">Infinite Credit Card</p>
-                      <p className="text-xs text-slate-500">Premium benefits & 2% cashback</p>
+                  {applyStep === 1 && (
+                    <>
+                      <h3 className="text-2xl font-bold text-slate-900 mb-6">Apply for New Card</h3>
+                      <div className="space-y-4">
+                        <div 
+                          onClick={() => setSelectedCardType('infinite')}
+                          className={`p-4 border-2 no-round cursor-pointer transition-all ${selectedCardType === 'infinite' ? 'border-primary bg-primary/5' : 'border-slate-100 hover:border-primary'}`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="font-bold text-slate-900">Infinite Credit Card</p>
+                            {selectedCardType === 'infinite' && <CheckCircle2 className="h-4 w-4 text-primary" />}
+                          </div>
+                          <p className="text-xs text-slate-500">Premium benefits & 2% cashback</p>
+                        </div>
+                        <div 
+                          onClick={() => setSelectedCardType('platinum')}
+                          className={`p-4 border-2 no-round cursor-pointer transition-all ${selectedCardType === 'platinum' ? 'border-primary bg-primary/5' : 'border-slate-100 hover:border-primary'}`}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="font-bold text-slate-900">Platinum Debit Card</p>
+                            {selectedCardType === 'platinum' && <CheckCircle2 className="h-4 w-4 text-primary" />}
+                          </div>
+                          <p className="text-xs text-slate-500">Zero annual fees & global access</p>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={handleApply}
+                        disabled={!selectedCardType}
+                        className="no-round mt-8 w-full bg-slate-900 py-4 font-bold text-white hover:bg-primary hover:text-slate-900 transition-all disabled:opacity-50"
+                      >
+                        Continue Application
+                      </button>
+                    </>
+                  )}
+
+                  {applyStep === 2 && (
+                    <div className="text-center py-8">
+                      <div className="h-16 w-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6" />
+                      <h3 className="text-xl font-bold text-slate-900">Processing Application</h3>
+                      <p className="text-sm text-slate-500 mt-2">We are reviewing your eligibility for the {selectedCardType === 'infinite' ? 'Infinite Credit' : 'Platinum Debit'} card...</p>
                     </div>
-                    <div className="p-4 border border-slate-100 no-round hover:border-primary transition-all cursor-pointer">
-                      <p className="font-bold text-slate-900">Platinum Debit Card</p>
-                      <p className="text-xs text-slate-500">Zero annual fees & global access</p>
+                  )}
+
+                  {applyStep === 3 && (
+                    <div className="text-center">
+                      <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center bg-green-100 text-green-600 no-round">
+                        <CheckCircle2 className="h-10 w-10" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-slate-900">Application Successful</h3>
+                      <p className="mt-4 text-slate-600">Your new card has been approved and will be delivered to your registered address within 3-5 business days.</p>
+                      <button 
+                        onClick={() => setActiveModal(null)}
+                        className="no-round mt-8 w-full bg-primary py-4 font-bold text-slate-900 hover:bg-slate-900 hover:text-white transition-all"
+                      >
+                        Done
+                      </button>
                     </div>
-                  </div>
-                  <button 
-                    onClick={() => setActiveModal(null)}
-                    className="no-round mt-8 w-full bg-slate-900 py-4 font-bold text-white hover:bg-primary hover:text-slate-900 transition-all"
-                  >
-                    Continue Application
-                  </button>
+                  )}
                 </div>
               )}
             </motion.div>
