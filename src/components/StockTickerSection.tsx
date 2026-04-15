@@ -11,6 +11,12 @@ const initialStocks = [
   { symbol: 'NVDA', name: 'NVIDIA', price: 875.28, change: +3.42 },
   { symbol: 'META', name: 'Meta', price: 484.03, change: -0.12 },
   { symbol: 'NFLX', name: 'Netflix', price: 610.56, change: +1.56 },
+  { symbol: 'AMD', name: 'AMD', price: 178.33, change: +2.10 },
+  { symbol: 'INTC', name: 'Intel', price: 43.52, change: -0.85 },
+  { symbol: 'PYPL', name: 'PayPal', price: 62.15, change: +0.45 },
+  { symbol: 'SQ', name: 'Square', price: 78.90, change: +1.25 },
+  { symbol: 'COIN', name: 'Coinbase', price: 245.60, change: +5.42 },
+  { symbol: 'HOOD', name: 'Robinhood', price: 18.25, change: +3.12 },
 ];
 
 export default function StockTickerSection() {
@@ -75,16 +81,14 @@ export default function StockTickerSection() {
         className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent z-10 pointer-events-none"
       />
       
-      <div className="mx-auto max-w-7xl px-6">
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="flex items-center overflow-x-auto no-scrollbar py-4 lg:py-6 gap-0 divide-x divide-slate-800/50"
-        >
-          {/* Live Indicator */}
-          <div className="flex-shrink-0 pr-8 mr-4 border-r border-slate-800/50 flex items-center gap-3">
+      <div className="mx-auto max-w-7xl px-6 relative">
+        {/* Edge Fades */}
+        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent z-40 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-slate-900 via-slate-900/80 to-transparent z-40 pointer-events-none" />
+
+        <div className="flex items-center py-4 lg:py-6 gap-0 overflow-hidden relative">
+          {/* Fixed Live Indicator */}
+          <div className="flex-shrink-0 pr-8 mr-4 border-r border-slate-800/50 flex items-center gap-3 bg-slate-900 z-50 relative">
             <div className="relative">
               <Activity className="h-5 w-5 text-primary" />
               <span className="absolute -top-1 -right-1 flex h-2 w-2">
@@ -98,48 +102,51 @@ export default function StockTickerSection() {
             </div>
           </div>
 
-          {stockData.map((stock) => (
-            <motion.div
-              key={stock.symbol}
-              variants={tileVariants}
-              className="flex-shrink-0 px-8 flex flex-col justify-center group cursor-default"
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] font-black text-slate-400 group-hover:text-primary transition-colors tracking-widest uppercase">{stock.symbol}</span>
-                <div className={`h-1 w-1 rounded-full ${stock.change >= 0 ? 'bg-green-500' : 'bg-red-500'}`} />
-              </div>
-              
-              <div className="flex items-baseline gap-2">
-                <span className="text-sm font-bold text-white tabular-nums tracking-tight">
-                  ${stock.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </span>
-                <div className={`flex items-center text-[9px] font-bold ${stock.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {stock.change >= 0 ? <TrendingUp className="h-2 w-2 mr-0.5" /> : <TrendingDown className="h-2 w-2 mr-0.5" />}
-                  {Math.abs(stock.change).toFixed(2)}%
+          {/* Infinite Moving Ticker */}
+          <motion.div 
+            animate={{ x: [0, -3000] }}
+            whileHover={{ animationPlayState: "paused" }}
+            transition={{ 
+              x: {
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 60,
+                ease: "linear"
+              }
+            }}
+            className="flex items-center gap-0 divide-x divide-slate-800/50 cursor-pointer"
+          >
+            {[...stockData, ...stockData, ...stockData].map((stock, idx) => (
+              <div
+                key={`${stock.symbol}-${idx}`}
+                className="flex-shrink-0 px-8 flex flex-col justify-center group cursor-default"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[10px] font-black text-slate-400 group-hover:text-primary transition-colors tracking-widest uppercase">{stock.symbol}</span>
+                  <div className={`h-1 w-1 rounded-full ${stock.change >= 0 ? 'bg-green-500' : 'bg-red-500'}`} />
+                </div>
+                
+                <div className="flex items-baseline gap-2">
+                  <span className="text-sm font-bold text-white tabular-nums tracking-tight">
+                    ${stock.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                  <div className={`flex items-center text-[9px] font-bold ${stock.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                    {stock.change >= 0 ? <TrendingUp className="h-2 w-2 mr-0.5" /> : <TrendingDown className="h-2 w-2 mr-0.5" />}
+                    {Math.abs(stock.change).toFixed(2)}%
+                  </div>
+                </div>
+
+                <div className="mt-2 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: "50%" }}
+                    animate={{ width: `${50 + (stock.change * 10)}%` }}
+                    className={`h-full ${stock.change >= 0 ? 'bg-green-500' : 'bg-red-500'} opacity-50`}
+                  />
                 </div>
               </div>
-
-              {/* Mini Sparkline Simulation */}
-              <div className="mt-2 h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                <motion.div 
-                  initial={{ width: "50%" }}
-                  animate={{ width: `${50 + (stock.change * 10)}%` }}
-                  className={`h-full ${stock.change >= 0 ? 'bg-green-500' : 'bg-red-500'} opacity-50`}
-                />
-              </div>
-            </motion.div>
-          ))}
-
-          {/* Extra Info Tile */}
-          <motion.div
-            variants={tileVariants}
-            className="flex-shrink-0 px-8 flex flex-col justify-center border-l border-slate-800/50"
-          >
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Global Index</p>
-            <p className="text-sm font-bold text-white tracking-tight">38,239.66</p>
-            <p className="text-[9px] font-bold text-green-500">+0.42%</p>
+            ))}
           </motion.div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
