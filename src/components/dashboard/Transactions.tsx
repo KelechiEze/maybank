@@ -4,8 +4,10 @@ import { Search, Filter, Download, ArrowUpRight, ArrowDownLeft, X, Printer, Shar
 import { motion, AnimatePresence } from 'motion/react';
 import Logo from '../Logo';
 
+import { useSearch } from '../../context/SearchContext';
+
 export default function Transactions() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const { searchQuery, setSearchQuery } = useSearch();
   const [selectedTx, setSelectedTx] = useState<any>(null);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);

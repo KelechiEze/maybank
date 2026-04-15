@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../DashboardLayout';
-import { Wallet, Plus, ArrowRight, ArrowLeft, ArrowUpRight, ArrowDownLeft, Download, Filter, Calendar, X, Printer, Share2, CheckCircle2, Building2, Hash, Search, ShieldCheck, Send } from 'lucide-react';
+import { Wallet, Plus, ArrowRight, ArrowLeft, ArrowUpRight, ArrowDownLeft, Download, Filter, Calendar, X, Printer, Share2, CheckCircle2, Building2, Hash, Search, ShieldCheck, Send, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Logo from '../Logo';
 import { handleNumberInput, handleLetterInput } from '../../lib/utils';
@@ -60,6 +60,9 @@ export default function Accounts() {
       { id: 'tx-init-4', accId: 'savings', title: "Apple Store", category: "Electronics", date: "Oct 24, 2023", time: "15:20", amount: "-$1,200.00", isPositive: false, ref: "MB-TX-11223", method: "Savings Account •••• 1290", status: "Completed" },
       { id: 'tx-init-5', accId: 'current', title: "Salary Deposit", category: "Income", date: "Oct 20, 2023", time: "08:00", amount: "+฿85,000.00", isPositive: true, ref: "MB-TX-44556", method: "Current Account •••• 8210", status: "Completed" },
       { id: 'tx-init-6', accId: 'savings', title: "Netflix Subscription", category: "Entertainment", date: "Oct 15, 2023", time: "00:01", amount: "-$15.99", isPositive: false, ref: "MB-TX-77889", method: "Savings Account •••• 1290", status: "Completed" },
+      { id: 'tx-init-7', accId: 'savings', title: "Amazon Web Services", category: "Business", date: "Oct 12, 2023", time: "11:30", amount: "-$450.00", isPositive: false, ref: "MB-TX-33445", method: "Savings Account •••• 1290", status: "Completed" },
+      { id: 'tx-init-8', accId: 'current', title: "7-Eleven Store", category: "Food", date: "Oct 11, 2023", time: "18:45", amount: "-฿120.00", isPositive: false, ref: "MB-TX-55667", method: "Current Account •••• 8210", status: "Completed" },
+      { id: 'tx-init-9', accId: 'savings', title: "Freelance Project", category: "Income", date: "Oct 05, 2023", time: "14:00", amount: "+$2,500.00", isPositive: true, ref: "MB-TX-99001", method: "Savings Account •••• 1290", status: "Completed" },
     ];
     
     const combined = [...allTx, ...initialTx];

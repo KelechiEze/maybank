@@ -115,12 +115,16 @@ function AppContent() {
   );
 }
 
+import { SearchProvider } from './context/SearchContext';
+
 export default function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <AppContent />
-    </Router>
+    <SearchProvider>
+      <Router>
+        <ScrollToTop />
+        <AppContent />
+      </Router>
+    </SearchProvider>
   );
 }
 

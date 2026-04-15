@@ -8,11 +8,16 @@ export const formatNumberWithCommas = (value: string) => {
   return parts.join('.');
 };
 
-export const allowOnlyNumbers = (value: string) => value.replace(/[^0-9]/g, '');
+export const allowOnlyNumbers = (value: string, allowDecimal = false) => {
+  if (allowDecimal) {
+    return value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+  }
+  return value.replace(/[^0-9]/g, '');
+};
 export const allowOnlyLetters = (value: string) => value.replace(/[^a-zA-Z\s]/g, '');
 
 export const handleNumberInput = (e: React.ChangeEvent<HTMLInputElement>, setter: (val: string) => void, withCommas = false) => {
-  let val = allowOnlyNumbers(e.target.value);
+  let val = allowOnlyNumbers(e.target.value, withCommas);
   if (withCommas) {
     val = formatNumberWithCommas(val);
   }

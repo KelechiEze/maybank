@@ -10,6 +10,7 @@ import {
   Send,
   Search,
   X,
+  Lock,
   CheckCircle2,
   ChevronRight,
   Building2,
@@ -25,9 +26,11 @@ import Logo from './Logo';
 import DashboardLayout from './DashboardLayout';
 import { handleNumberInput, handleLetterInput } from '../lib/utils';
 import OTPInput from './ui/OTPInput';
+import { useSearch } from '../context/SearchContext';
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { searchQuery } = useSearch();
   const [currency, setCurrency] = useState<'USD' | 'THB'>('USD');
   const [showSendMoney, setShowSendMoney] = useState(false);
   const [showPayBill, setShowPayBill] = useState(false);
@@ -42,6 +45,7 @@ export default function Dashboard() {
   const [fee, setFee] = useState(0);
   const [selectedBill, setSelectedBill] = useState<any>(null);
   const [billStep, setBillStep] = useState(1);
+  const [billRef, setBillRef] = useState('');
   const [transactions, setTransactions] = useState([
     { id: 'tx1', title: "Apple Store", category: "Electronics", date: "Oct 24, 2023", amount: "-$45,900.00", isPositive: false },
     { id: 'tx2', title: "Salary Deposit", category: "Income", date: "Oct 20, 2023", amount: "+$85,000.00", isPositive: true },
@@ -51,6 +55,10 @@ export default function Dashboard() {
     { id: 'tx6', title: "Starbucks Coffee", category: "Food & Drink", date: "Oct 14, 2023", amount: "-$5.50", isPositive: false },
     { id: 'tx7', title: "Freelance Payment", category: "Income", date: "Oct 12, 2023", amount: "+$1,200.00", isPositive: true },
     { id: 'tx8', title: "Electric Bill", category: "Utilities", date: "Oct 10, 2023", amount: "-$120.00", isPositive: false },
+    { id: 'tx9', title: "Gym Membership", category: "Health", date: "Oct 08, 2023", amount: "-$50.00", isPositive: false },
+    { id: 'tx10', title: "Uber Ride", category: "Transport", date: "Oct 07, 2023", amount: "-$25.00", isPositive: false },
+    { id: 'tx11', title: "Grocery Store", category: "Food", date: "Oct 05, 2023", amount: "-$150.00", isPositive: false },
+    { id: 'tx12', title: "Dividend Payment", category: "Investment", date: "Oct 01, 2023", amount: "+$450.00", isPositive: true },
   ]);
   const [totalBalance, setTotalBalance] = useState(2450500.00);
 
@@ -281,7 +289,13 @@ export default function Dashboard() {
             </div>
             
             <div className="no-round border border-slate-200 bg-white overflow-hidden shadow-sm">
-              {transactions.slice(0, 5).map(tx => (
+              {transactions
+                .filter(tx => 
+                  tx.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  tx.category.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                .slice(0, 5)
+                .map(tx => (
                 <TransactionItem 
                   key={tx.id}
                   title={tx.title} 
@@ -618,7 +632,8 @@ export default function Dashboard() {
                       <input 
                         type="text" 
                         placeholder="Enter bill reference"
-                        onChange={(e) => handleNumberInput(e, (val) => {})} // Just validate, don't need state for ref here based on current code
+                        value={billRef}
+                        onChange={(e) => handleNumberInput(e, setBillRef)}
                         className="w-full border border-slate-200 py-3 px-4 no-round text-sm font-bold outline-none focus:border-primary"
                       />
                     </div>

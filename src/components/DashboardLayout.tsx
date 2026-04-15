@@ -19,15 +19,16 @@ import {
 } from 'lucide-react';
 import Logo from './Logo';
 import { useNavigate } from 'react-router-dom';
+import { useSearch } from '../context/SearchContext';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { searchQuery, setSearchQuery } = useSearch();
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
 
   const handleProfileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

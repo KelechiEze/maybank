@@ -1,4 +1,5 @@
 import Hero from './Hero';
+import StockTickerSection from './StockTickerSection';
 import TradingSection from './TradingSection';
 import EMICalculator from './EMICalculator';
 import FAQSection from './FAQSection';
@@ -12,6 +13,7 @@ export default function Home() {
   return (
     <main>
       <Hero />
+      <StockTickerSection />
       
       {/* Features Section */}
       <section className="bg-slate-50 py-24">
