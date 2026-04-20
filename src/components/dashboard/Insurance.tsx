@@ -154,9 +154,9 @@ export default function Insurance() {
   };
 
   return (
-    <DashboardLayout>
+    <>
       <AnimatePresence mode="wait">
-        {!selectedPlan ? (
+      {!selectedPlan ? (
           <motion.div 
             key="list"
             initial={{ opacity: 0, y: 20 }}
@@ -442,7 +442,7 @@ export default function Insurance() {
           </div>
         )}
       </AnimatePresence>
-    </DashboardLayout>
+    </>
   );
 }
 

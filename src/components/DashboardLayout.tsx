@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Wallet, 
@@ -18,10 +18,9 @@ import {
   ChevronRight
 } from 'lucide-react';
 import Logo from './Logo';
-import { useNavigate } from 'react-router-dom';
 import { useSearch } from '../context/SearchContext';
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { searchQuery, setSearchQuery } = useSearch();
@@ -69,7 +68,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   ].filter(item => item.title.toLowerCase().includes(searchQuery.toLowerCase())) : [];
 
   return (
-    <div className="flex min-h-screen bg-slate-50 relative">
+    <div className="flex min-h-screen bg-slate-50 relative overflow-x-hidden">
       {/* Background Decorative Elements */}
       <div className="absolute top-0 right-0 w-full h-full pointer-events-none opacity-5">
         <img 
@@ -92,7 +91,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
+      {/* Sidebar - Remains Static */}
       <aside className={`fixed left-0 top-0 z-50 h-full w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-300 lg:flex lg:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex items-center justify-between p-8">
           <Logo />
@@ -105,11 +104,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
         
         <nav className="flex-1 space-y-1 px-4">
-          <div className="lg:hidden space-y-1">
-            {/* These are in the bottom bar on mobile, but we can keep them here too or hide them */}
-            {/* User said: "the insurance settings and logout can remain in the sidebar menu" */}
-            {/* So we hide the first 5 in the sidebar on mobile */}
-          </div>
           <div className="hidden lg:block space-y-1">
             {sidebarLinks.map(link => (
               <SidebarLink key={link.to} to={link.to} icon={link.icon} label={link.label} active={location.pathname === link.to} />
@@ -127,9 +121,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 lg:pl-64 relative z-10">
-        {/* Header */}
+      {/* Main Content Area */}
+      <div className="flex-1 lg:pl-64 flex flex-col relative z-20 min-h-screen">
+        {/* Header - Remains Static */}
         <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-md px-4 lg:px-8">
           <div className="flex items-center gap-4">
             <button 
@@ -138,7 +132,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             >
               <Menu className="h-6 w-6" />
             </button>
-            <h1 className="text-lg lg:text-xl font-bold text-slate-900">May Bank Portal</h1>
+            <h1 className="text-lg lg:text-xl font-bold text-slate-900">Welcome Back</h1>
           </div>
           
           <div className="flex items-center gap-6">
@@ -208,7 +202,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <AnimatePresence>
                 {showNotifications && (
                   <>
-                    {/* Backdrop for mobile */}
                     <motion.div 
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -273,39 +266,41 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <Camera className="h-3 w-3" />
                 <input type="file" className="hidden" accept="image/*" onChange={handleProfileUpload} />
               </label>
-              
-              {isUploading && (
-                <div className="absolute top-12 right-0 w-48 bg-white shadow-xl border border-slate-100 p-3 no-round z-50">
-                  <div className="flex items-center gap-3">
-                    <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-600">Verifying credentials...</span>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </header>
 
-        <div className="p-8 pb-32 lg:pb-8">
-          {children}
+        {/* Page Content - Only this part animates with transmission */}
+        <div className="flex-1 p-4 lg:p-12 pb-32 lg:pb-12 relative">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {/* Mobile Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 lg:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+        {/* Mobile Bottom Navigation - Remains Static */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 lg:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
           <div className="flex items-center justify-around p-2">
             {sidebarLinks.map(link => (
               <Link 
                 key={link.to} 
                 to={link.to} 
-                className={`flex flex-col items-center gap-1 p-2 transition-all ${location.pathname === link.to ? 'text-primary' : 'text-slate-400'}`}
+                className={`flex flex-col items-center gap-1 p-2 transition-all ${location.pathname === link.to ? 'text-primary uppercase' : 'text-slate-400'}`}
               >
                 <span className="h-5 w-5">{link.icon}</span>
-                <span className="text-[10px] font-bold uppercase tracking-tighter">{link.label}</span>
+                <span className="text-[10px] font-black tracking-tighter uppercase">{link.label}</span>
               </Link>
             ))}
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

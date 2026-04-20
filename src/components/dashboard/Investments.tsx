@@ -23,9 +23,9 @@ export default function Investments() {
   ];
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-8">
-        <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between">
           <h2 className="text-xl lg:text-2xl font-bold text-slate-900">Portfolio</h2>
           <button 
             onClick={() => setShowInvestNow(true)}
@@ -218,7 +218,7 @@ export default function Investments() {
           </div>
         )}
       </AnimatePresence>
-    </DashboardLayout>
+    </>
   );
 }
 

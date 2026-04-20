@@ -42,9 +42,9 @@ export default function Settings() {
   };
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-8">
-        <h2 className="text-2xl font-bold text-slate-900">Account Settings</h2>
+      <h2 className="text-2xl font-bold text-slate-900">Account Settings</h2>
 
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Navigation */}
@@ -266,7 +266,7 @@ export default function Settings() {
           </div>
         )}
       </AnimatePresence>
-    </DashboardLayout>
+    </>
   );
 }
 

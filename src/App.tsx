@@ -23,6 +23,7 @@ import Transactions from './components/dashboard/Transactions';
 import Investments from './components/dashboard/Investments';
 import Insurance from './components/dashboard/Insurance';
 import Settings from './components/dashboard/Settings';
+import DashboardLayout from './components/DashboardLayout';
 import NewsDetail from './components/NewsDetail';
 import { Careers, FAQs, Business, Rewards, BranchMap } from './components/WebsitePages';
 import { motion, AnimatePresence } from 'motion/react';
@@ -76,10 +77,10 @@ function AppContent() {
         
         <AnimatePresence mode="wait">
           <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, x: 50 }}
+            key={location.pathname.startsWith('/dashboard') ? 'dashboard-layout' : location.pathname}
+            initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
+            exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
             <Routes location={location}>
@@ -98,13 +99,15 @@ function AppContent() {
               <Route path="/rewards" element={<Rewards />} />
               <Route path="/map" element={<BranchMap />} />
               
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/dashboard/accounts" element={<Accounts />} />
-              <Route path="/dashboard/cards" element={<Cards />} />
-              <Route path="/dashboard/transactions" element={<Transactions />} />
-              <Route path="/dashboard/investments" element={<Investments />} />
-              <Route path="/dashboard/insurance" element={<Insurance />} />
-              <Route path="/dashboard/settings" element={<Settings />} />
+              <Route path="/dashboard" element={<DashboardLayout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="accounts" element={<Accounts />} />
+                <Route path="cards" element={<Cards />} />
+                <Route path="transactions" element={<Transactions />} />
+                <Route path="investments" element={<Investments />} />
+                <Route path="insurance" element={<Insurance />} />
+                <Route path="settings" element={<Settings />} />
+              </Route>
             </Routes>
           </motion.div>
         </AnimatePresence>

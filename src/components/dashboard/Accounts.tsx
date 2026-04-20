@@ -124,9 +124,9 @@ export default function Accounts() {
   };
 
   return (
-    <DashboardLayout>
+    <>
       <AnimatePresence mode="wait">
-        {!selectedAccount ? (
+      {!selectedAccount ? (
           <motion.div 
             key="list"
             initial={{ opacity: 0, x: 20 }}
@@ -472,7 +472,7 @@ export default function Accounts() {
           </div>
         )}
       </AnimatePresence>
-    </DashboardLayout>
+    </>
   );
 }
 

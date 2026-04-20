@@ -50,9 +50,9 @@ export default function Transactions() {
   };
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 lg:gap-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 lg:gap-6">
           <h2 className="text-xl lg:text-2xl font-bold text-slate-900">Transactions</h2>
           <div className="flex items-center gap-2 lg:gap-4">
             <button className="flex-1 lg:flex-none no-round border border-slate-200 bg-white px-3 lg:px-4 py-2 flex items-center justify-center gap-2 text-[10px] lg:text-sm font-bold text-slate-600 hover:border-primary transition-all">
@@ -228,7 +228,7 @@ export default function Transactions() {
           </div>
         )}
       </AnimatePresence>
-    </DashboardLayout>
+    </>
   );
 }
 

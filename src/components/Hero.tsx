@@ -72,6 +72,9 @@ export default function Hero() {
               Open an Account
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
+            <Link to="/login" className="no-round group flex items-center gap-2 bg-slate-900/50 backdrop-blur-md px-6 py-3 font-bold text-white transition-all hover:bg-primary hover:text-slate-900 border border-white/20">
+              Login to Portal
+            </Link>
           </motion.div>
         </div>
       </div>

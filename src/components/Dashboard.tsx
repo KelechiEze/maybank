@@ -24,6 +24,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 import DashboardLayout from './DashboardLayout';
+import PromotionalCarousel from './dashboard/PromotionalCarousel';
 import { handleNumberInput, handleLetterInput } from '../lib/utils';
 import OTPInput from './ui/OTPInput';
 import { useSearch } from '../context/SearchContext';
@@ -219,9 +220,9 @@ export default function Dashboard() {
   ];
 
   return (
-    <DashboardLayout>
+    <>
       <div className="space-y-6 lg:space-y-8">
-        {/* Header with Currency Switcher */}
+      {/* Header with Currency Switcher */}
         <div className="flex items-center justify-between">
           <h2 className="text-xl lg:text-2xl font-black text-slate-900">Overview</h2>
           <div className="flex bg-slate-100 p-1 no-round border border-slate-200">
@@ -240,7 +241,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Stats Grid - Only show total balance on mobile with beautiful design */}
+        {/* Promotional Carousel */}
+        <PromotionalCarousel totalBalance={totalBalance} />
+
+        {/* Stats Grid - Premium designed cards for desktop */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           <div className="col-span-1 lg:col-span-1">
             <StatCard 
@@ -710,13 +714,17 @@ export default function Dashboard() {
           </div>
         )}
       </AnimatePresence>
-    </DashboardLayout>
+    </>
   );
 }
 
 function StatCard({ title, amount, change, trend, icon, isMain = false }: any) {
   return (
-    <div className={`no-round border border-slate-200 bg-white p-4 lg:p-6 shadow-sm hover:border-primary transition-all group relative overflow-hidden ${isMain ? 'lg:bg-white' : ''}`}>
+    <div className={`no-round border border-slate-200 lg:border-slate-800 bg-white lg:bg-slate-900 p-4 lg:p-7 shadow-sm lg:shadow-xl hover:border-primary transition-all group relative overflow-hidden`}>
+      {/* Background Glows for Desktop */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 hidden lg:block blur-3xl group-hover:bg-primary/10 transition-all" />
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-500/5 rounded-full -ml-12 -mb-12 hidden lg:block blur-2xl group-hover:bg-blue-500/10 transition-all" />
+
       {isMain && (
         <>
           {/* Platinum Card Style for Mobile Main Card */}
@@ -725,26 +733,35 @@ function StatCard({ title, amount, change, trend, icon, isMain = false }: any) {
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full -ml-12 -mb-12 lg:hidden blur-xl" />
         </>
       )}
+
       <div className="flex items-center justify-between relative z-10">
-        <div className={`h-10 w-10 lg:h-10 lg:w-10 bg-slate-50 flex items-center justify-center no-round group-hover:bg-primary transition-all ${isMain ? 'bg-primary/20 lg:bg-primary/10' : ''}`}>
-          <div className={isMain ? 'text-primary lg:text-blue-500' : ''}>
+        <div className={`h-10 w-10 lg:h-12 lg:w-12 bg-slate-50 lg:bg-slate-800/50 flex items-center justify-center no-round group-hover:bg-primary transition-all ${isMain ? 'bg-primary/20 lg:bg-slate-800/80 shadow-inner' : ''}`}>
+          <div className={`transition-colors duration-300 ${isMain ? 'text-primary lg:text-primary group-hover:text-slate-900' : 'text-slate-400 group-hover:text-slate-900'}`}>
             {icon}
           </div>
         </div>
-        <span className={`text-[10px] lg:text-xs font-bold ${trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
-          {change}
-        </span>
+        <div className={`flex flex-col items-end`}>
+          <span className={`text-[10px] lg:text-xs font-black uppercase tracking-tighter ${trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
+            {trend === 'up' ? '↑' : '↓'} {change}
+          </span>
+          <p className="text-[8px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">vs last month</p>
+        </div>
       </div>
-      <div className="mt-4 lg:mt-4 flex flex-col-reverse lg:flex-col relative z-10">
-        <p className={`text-[10px] lg:text-[10px] font-bold uppercase tracking-widest truncate ${isMain ? 'text-slate-400 lg:text-slate-400' : 'text-slate-400'}`}>{title}</p>
-        <h3 className={`font-black truncate ${isMain ? 'text-2xl lg:text-2xl text-white lg:text-slate-900' : 'text-xs lg:text-2xl text-slate-900'} mb-1 lg:mb-0 lg:mt-1`}>
+
+      <div className="mt-4 lg:mt-8 flex flex-col-reverse lg:flex-col relative z-10">
+        <p className={`text-[10px] lg:text-xs font-bold uppercase tracking-[0.2em] truncate ${isMain ? 'text-slate-400 lg:text-slate-500' : 'text-slate-400 lg:text-slate-500'}`}>{title}</p>
+        <h3 className={`font-black truncate ${isMain ? 'text-2xl lg:text-3xl text-white lg:text-white' : 'text-xs lg:text-3xl text-slate-900 lg:text-white'} mt-1`}>
           {amount}
         </h3>
       </div>
+
+      {/* Decorative lines for Desktop */}
+      <div className="absolute bottom-0 right-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity hidden lg:block" />
+
       {isMain && (
         <div className="mt-4 pt-4 border-t border-white/10 lg:hidden relative z-10 flex justify-between items-center">
           <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Maybank Platinum</p>
-          <div className="h-4 w-6 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-sm opacity-50" />
+          <div className="h-4 w-6 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-sm opacity-50 shadow-sm" />
         </div>
       )}
     </div>
