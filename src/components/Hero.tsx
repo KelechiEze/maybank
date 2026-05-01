@@ -55,7 +55,7 @@ export default function Hero() {
             <h1 className="text-4xl font-bold leading-[1.1] text-white md:text-6xl lg:text-7xl">
               Bank with the <br />
               <span className="text-primary">Happiest Customers</span> <br />
-              in the World
+              all around the World
             </h1>
             <p className="mt-4 max-w-xl text-base text-slate-200 md:text-lg">
               Experience the next generation of digital banking. We combine cutting-edge technology with human-centric service to empower your financial future.
