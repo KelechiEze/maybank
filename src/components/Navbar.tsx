@@ -62,6 +62,7 @@ export function Navbar() {
 
         {/* Actions & Hamburger */}
         <div className="flex items-center gap-4">
+          {/* COMMENTED OUT - Desktop Login and Signup Buttons
           <div className="hidden md:flex items-center gap-4">
             <Link to="/login" className="no-round flex items-center gap-2 bg-slate-900 px-6 py-3 font-bold text-white transition-all hover:bg-primary hover:text-slate-900">
               <User className="h-4 w-4" />
@@ -71,6 +72,7 @@ export function Navbar() {
               Open an Account
             </Link>
           </div>
+          */}
 
           {/* Mobile Hamburger with Spinning Text */}
           <button 
@@ -127,6 +129,7 @@ export function Navbar() {
                 <MobileNavItem to="/contact" label="Get In Touch" />
               </div>
 
+              {/* COMMENTED OUT - Mobile Menu Login and Signup Buttons
               <div className="mt-auto flex flex-col gap-4">
                 <Link to="/login" className="no-round flex w-full items-center justify-center gap-2 bg-slate-900 py-5 font-black uppercase tracking-widest text-white">
                   <User className="h-5 w-5" />
@@ -136,6 +139,7 @@ export function Navbar() {
                   Open an Account
                 </Link>
               </div>
+              */}
             </div>
           </motion.div>
         )}
@@ -198,4 +202,3 @@ export function UpdateBar() {
     </div>
   );
 }
-

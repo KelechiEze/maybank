@@ -68,13 +68,18 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 4.5 }}
             className="mt-8 flex flex-wrap gap-4"
           >
+            {/* COMMENTED OUT - Open an Account Button
             <Link to="/signup" className="no-round group flex items-center gap-2 bg-white px-6 py-3 font-bold text-slate-900 transition-all hover:bg-primary">
               Open an Account
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
+            */}
+            
+            {/* COMMENTED OUT - Login Button
             <Link to="/login" className="no-round group flex items-center gap-2 bg-slate-900/50 backdrop-blur-md px-6 py-3 font-bold text-white transition-all hover:bg-primary hover:text-slate-900 border border-white/20">
               Login to Portal
             </Link>
+            */}
           </motion.div>
         </div>
       </div>
@@ -86,7 +91,7 @@ export default function Hero() {
           animate={{ x: 0 }}
           transition={{ delay: 4.8 }}
         >
-          <Link to="/login" className="no-round flex items-center gap-4 bg-primary px-8 py-4 font-bold text-slate-900 transition-all hover:bg-white">
+          <Link to="/make-payment" className="no-round flex items-center gap-4 bg-primary px-8 py-4 font-bold text-slate-900 transition-all hover:bg-white">
             Make Payment
             <Play className="h-4 w-4 fill-current" />
           </Link>
